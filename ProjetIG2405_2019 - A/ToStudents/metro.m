@@ -9,6 +9,11 @@
 %                           aux images
 % 
 %--------------------------------------------------------------------------
+
+clear all;
+close all;
+clc 
+
 function [fileOut,resizeFactor] = metro(type)
 
 
@@ -23,16 +28,16 @@ else
     ok = 0;
     uiwait(errordlg('Bad identifier (should be ''Learn'' or ''Test'' ','ERRORDLG'));
 end
-
+%%
 
 if ok
     % Definir le facteur de redimensionnement
-    resizeFactor =  -- COMPLETER
+    resizeFactor =  0.5;
     
     % Programme de reconnaissance des images
     for n = numImages
 
-        
+        boxes = segmentation(n)
         -- RECONNAISSANCE DES SYMBOLES DANS L'IMAGE n
         
         -- STOCAGE DANS LA MATRICE BD de 6 colonnes
@@ -42,4 +47,37 @@ if ok
     fileOut  = 'myResuts.mat';
     save(fileOut,'BD');
     
+end
+end
+
+
+function segmentedboxes = segmentation(n)
+    figure;
+    im  = im2double(imread(sprintf('IM (%d).JPG',n)));
+    im 	= imresize(im,0.5);
+
+    r=im(:,:,1);
+    r=imbinarize(r,graythresh(r));
+    g=im(:,:,2);
+    g=imbinarize(g,graythresh(g));
+    b=im(:,:,3);
+    b=imbinarize(b,graythresh(b));
+    isum = (r&g&b);
+    
+    
+    subplot(1,2,1), imshow(im);
+    subplot(1,2,2), imshow(isum);
+    
+    [centers, radii] = imfindcircles(isum,[10 100],'Sensitivity',0.90,'ObjectPolarity','dark','method','TwoStage');
+    viscircles(centers,radii);
+
+    boxes = zeros(1,5);
+    for row = 1:length(radii)
+        boxes(row,1)=n;
+        boxes(row,2)=(centers(row,1)-radii(row));
+        boxes(row,3)=(centers(row,1)+radii(row));
+        boxes(row,4)=(centers(row,2)-radii(row));
+        boxes(row,5)=(centers(row,2)+radii(row));
+    end
+    segmentedboxes = [segmentedboxes;boxes];
 end
