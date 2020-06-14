@@ -35,10 +35,10 @@ function pictodetected = classification(segmentedboxes,resize,imagenumber)
            if isempty(boxPairs) == 0
                foundpicto = zeros(1,5);
                foundpicto(1)=imagenumber;
-               foundpicto(2)=segmentedboxes(box,2);
-               foundpicto(3)=segmentedboxes(box,3);
-               foundpicto(4)=segmentedboxes(box,4);
-               foundpicto(5)=segmentedboxes(box,5);
+               foundpicto(2)=segmentedboxes(box,4);
+               foundpicto(3)=segmentedboxes(box,5);
+               foundpicto(4)=segmentedboxes(box,2);
+               foundpicto(5)=segmentedboxes(box,3);
                foundpicto(6)=listpicto;
                pictodetected = [pictodetected;foundpicto];
            end
